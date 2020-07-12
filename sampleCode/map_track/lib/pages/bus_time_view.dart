@@ -69,6 +69,7 @@ class _BusTimeListState extends State<BusTimeList> {
                   child: TextField(
                     controller: source,
                     decoration: InputDecoration(
+                      border: InputBorder.none,
                         hintText: "Your Current Location",
                         hintStyle: TextStyle(
                           color: Colors.grey,
@@ -89,6 +90,7 @@ class _BusTimeListState extends State<BusTimeList> {
                   child: TextField(
                     controller: destController,
                     decoration: InputDecoration(
+                      border: InputBorder.none,
                         hintText: "Destination",
                         hintStyle: TextStyle(
                           color: Colors.grey,
@@ -134,28 +136,23 @@ class _BusTimeListState extends State<BusTimeList> {
               ),
               Padding(
                 padding: EdgeInsets.only(left: 50, right: 50, top: 5),
-                child: Material(
-                    child: Ink(
+                child: FlatButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
                   color: Colors.yellow,
-                  child: InkWell(
-                    onTap: () {
-                      buildList();
-                    },
-                    splashColor: Colors.amber,
-                    child: Container(
-                      width: 250,
-                      height: 35,
-                      child: Center(
-                          child: Text(
-                        "Find Routes",
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
+                  textColor: Colors.black,
+                  padding: EdgeInsets.all(8.0),
+                  onPressed: () {
+                    buildList();
+                  },
+                  child: Text(
+                    "Find Routes".toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 14.0,
                     ),
                   ),
-                )),
+                ),
               ),
             ]),
           ),

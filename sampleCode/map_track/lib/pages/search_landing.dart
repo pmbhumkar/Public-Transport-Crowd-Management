@@ -30,6 +30,7 @@ class SearchLanding extends StatelessWidget {
       //   automaticallyImplyLeading: false,
 
       // ),
+      extendBody: true,
       body: DefaultTabController(
         length: 2,
         child: NestedScrollView(
@@ -172,10 +173,16 @@ class SearchLanding extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.white,
+              title: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Text(
+                  'Login',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

@@ -9,7 +9,7 @@ import 'package:maptrack/pages/bus_time_view.dart';
 void main() {
   runApp(MaterialApp(
 //    debugShowCheckedModeBanner: false,
-   initialRoute: '/login',
+  //  initialRoute: '/busTime',
     routes: {
       '/' : (context) => SearchLanding(),
       '/busTrack': (context) => BusTrack(),
