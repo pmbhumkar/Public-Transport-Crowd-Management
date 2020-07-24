@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maptrack/pages/bus_time_view.dart';
+import 'package:maptrack/pages/login.dart';
 
 class SearchLanding extends StatelessWidget {
   Map<String, IconData> favourites = {
@@ -176,7 +177,11 @@ class SearchLanding extends StatelessWidget {
               title: InkWell(
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.pushNamed(context, '/login');
+                  // Navigator.pushNamed(context, '/login');
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        LoginPage(),
+                  ));
                 },
                 child: Text(
                   'Login',

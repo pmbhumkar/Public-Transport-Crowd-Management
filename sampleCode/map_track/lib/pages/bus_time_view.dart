@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maptrack/pages/bus_track.dart';
 
 class BusTimeList extends StatefulWidget {
   static final backColor = Colors.grey[800];
@@ -69,7 +70,7 @@ class _BusTimeListState extends State<BusTimeList> {
                   child: TextField(
                     controller: source,
                     decoration: InputDecoration(
-                      border: InputBorder.none,
+                        border: InputBorder.none,
                         hintText: "Your Current Location",
                         hintStyle: TextStyle(
                           color: Colors.grey,
@@ -90,7 +91,7 @@ class _BusTimeListState extends State<BusTimeList> {
                   child: TextField(
                     controller: destController,
                     decoration: InputDecoration(
-                      border: InputBorder.none,
+                        border: InputBorder.none,
                         hintText: "Destination",
                         hintStyle: TextStyle(
                           color: Colors.grey,
@@ -170,10 +171,21 @@ class _BusTimeListState extends State<BusTimeList> {
                 busList[i]["number"],
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text(busList[i]["busStop"]),
-              trailing: Text(busList[i]["duration"]),
+              subtitle: Text(busList[i]["busStop"] + ' / ' + busList[i]["duration"]),
+              trailing:  Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget> [
+                  Text('Avail - 20'),
+                  Text('Psgr - 35')
+                ]
+              ),
               onTap: () {
-                Navigator.pushNamed(context, '/busTrack');
+                // Navigator.pushNamed(context, '/busTrack');
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        BusTrack(),
+                  ));
               },
             ),
           );
