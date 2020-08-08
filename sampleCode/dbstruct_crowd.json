@@ -1,0 +1,60 @@
+Bus Geo:
+{
+	"BusID" : {
+		"latitude" : "",
+		"longitude": "",
+		"accuracy": "",
+		"heading": ""
+	}
+}
+
+Bus Info: 
+{
+	"BusID" : "",
+	"BusNumber": "",
+	"BusRoute": "BusRouteID"
+}
+
+Bus Stops:
+{
+	"BusStopName": {
+		"latitude": "",
+		"longitude": ""
+	}
+}
+
+Bus Route:
+{
+	"BusRouteID" : {
+		"Name" : "Katraj-Nigdi",
+		"Source": "",
+		"Destination": "",
+		"Route": ["Each", "Bus", "Stop", "Name"]
+	}
+}
+
+------------------------------------------------------
+
+Bus Operator(Conductor/Driver):
+{
+	"Name": "",
+	"ID": "",
+	"HealthCert": "",
+	"Address": "",
+	"HealthStatus": ""
+}
+
+------------------------------------------------------
+
+Depot Manager:
+{
+	"Name": "",
+	"ID": "",
+}
+
+Bus Operator - Bus Relation:
+{
+	"BusOperatorID" : "BusID"
+}
+
+Dates, Bus, Time, BusStop,
