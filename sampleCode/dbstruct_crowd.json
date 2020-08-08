@@ -1,29 +1,35 @@
-Bus Geo:
+BusGeo:
 {
 	"BusID" : {
-		"latitude" : "",
-		"longitude": "",
+		"latlng" : [lat,lng], #GeoPoint
 		"accuracy": "",
 		"heading": ""
 	}
 }
 
-Bus Info: 
+BusInfo: 
 {
-	"BusID" : "",
-	"BusNumber": "",
-	"BusRoute": "BusRouteID"
+	"BusID" : {
+    "BusNumber": "",
+    "BusRoute": "BusRouteID",
+    "LastSanitized": "<Date>",
+    "TotalSeats": "<Int>",
+    "PassengerCount": "<Int>",
+    "LiveCount": {
+      "BusStopName": "<Int>"
+    }
+  }
 }
 
-Bus Stops:
+BusStop:
 {
 	"BusStopName": {
-		"latitude": "",
-		"longitude": ""
+		"latlng": [lat,lng], #GeoPoint
+    "skip": "<Bool>"
 	}
 }
 
-Bus Route:
+BusRoute:
 {
 	"BusRouteID" : {
 		"Name" : "Katraj-Nigdi",
@@ -37,11 +43,12 @@ Bus Route:
 
 Bus Operator(Conductor/Driver):
 {
-	"Name": "",
-	"ID": "",
-	"HealthCert": "",
-	"Address": "",
-	"HealthStatus": ""
+  "BusOperatorID": {
+    "Name": "",
+    "Address": "",
+    "HealthStatus": "<Bool>",
+    "BusID": "BusID"
+  }
 }
 
 ------------------------------------------------------
@@ -52,9 +59,7 @@ Depot Manager:
 	"ID": "",
 }
 
-Bus Operator - Bus Relation:
-{
-	"BusOperatorID" : "BusID"
-}
 
 Dates, Bus, Time, BusStop,
+
+Hotspot = ["BusStopName", "..."]
