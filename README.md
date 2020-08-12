@@ -2,10 +2,10 @@
 A solution to manage crowd at public transport during Covid-19 pandemic
 
 ## Issue:
-As lockdown at most places is started to relieve a bit, people started to move out and travel. Some people are dependent on Pubilc transports. But Public transports are crowded most of times. This can be a serious issue in covid-19 pandemic as people are supposed to maintain safe distance from each other. "Public Transport Crowd Management" can helps to solve this problem
+Since lockdown at most places is started to ease, people have started to move out and travel. Some people are dependent on Pubilc transports. But Public transports are crowded most of times. This can be a serious issue in covid-19 pandemic as people are supposed to maintain safe distance from each other. "Public Transport Crowd Management" can helps to solve this problem
 
 ## Solution: 
-This app provides the realtime data of seats availability in the public transport such as bus. Anyone willing to travel, will also get to see the sanitization status for the Bus and the health status of the Bus operator/s. This also provides bus operators an interface to check whether any bus stop needs to be skipped as the area around that bus stop is marked as RED zone by government.
+This app provides the realtime data of seats availability in the public transport such as bus. Anyone willing to travel, will also get to see the sanitization status for the Bus and the health status of the Bus operator/s. This app also provides bus operators an interface to check whether any bus stop needs to be skipped as the area around that bus stop is marked as RED zone by government.
 
 ## How it works: 
 1. **Provides Buses availble on a route** - App will list the buses available on the route/destination provided by an user.
