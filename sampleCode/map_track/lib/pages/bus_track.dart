@@ -4,8 +4,13 @@ import 'dart:typed_data';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maptrack/services/database.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class BusTrack extends StatefulWidget {
+  String busId = "";
+  CameraPosition initPosition;
+  BusTrack({Key key, @required this.busId, this.initPosition}) : super(key: key);
+
   @override
   _BusTrackState createState() => _BusTrackState();
 }
@@ -49,16 +54,33 @@ class _BusTrackState extends State<BusTrack> {
   Marker marker;
   Circle circle;
   int counter = 0;
+  static String busID = "";
+  Map<String, String> statusMap = {
+    "Time to arrive at {BusStopName}": "19 min",
+    "Bus Number": "7537",
+    "Available Seats": "13",
+    "Next Stoppage": "Baner",
+    "Driver health status": "Healthy",
+    "Bus sanitization status": "Last sanitized on 25th July",
+    "Last update": "2 sec ago",
+    "BusId": busID,
+  };
 
-  CameraPosition initPosition;
+  void initilization() {
+    setState(() {
+      busID = widget.busId;
+    });
+  }
+
+  
   // CameraPosition initPosition = CameraPosition(
   //   target: LatLng(18.5204, 73.8567),
   //   zoom: 15,
   // );
 
-  _BusTrackState() {
-    getInitLocation();
-  }
+  // _BusTrackState() {
+  //   getInitLocation();
+  // }
 
   Future<Uint8List> getMarker() async {
     ByteData byteData =
@@ -110,44 +132,70 @@ class _BusTrackState extends State<BusTrack> {
     updateMarkerAndCircle(location, imageData);
   }
 
-  bool initial = false;
-  void getInitLocation() async {
-    if (!initial) {
-      LocationData location = await _locationTracker.getLocation();
-      this.setState(() {
-        initPosition = new CameraPosition(
-          target: LatLng(location.latitude, location.longitude),
-          zoom: 15,
-        );
-      });
-      print(initPosition);
-      initial = true;
-    }
+  // bool initial = false;
+  // void getInitLocation() async {
+  //   if (!initial) {
+  //     LocationData location = await _locationTracker.getLocation();
+  //     this.setState(() {
+  //       initPosition = new CameraPosition(
+  //         target: LatLng(location.latitude, location.longitude),
+  //         zoom: 15,
+  //       );
+  //     });
+  //     print(initPosition);
+  //     initial = true;
+  //   }
+  // }
 
-    
+  List<TableRow> _buildRow() {
+    List<TableRow> tr = [];
+    for (var key in statusMap.keys) {
+      tr.add(TableRow(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 10, top: 10),
+            child: Text(key),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Text(":  " + statusMap[key])),
+        ],
+      ));
+    }
+    return tr;
   }
 
   @override
   Widget build(BuildContext context) {
-    getInitLocation();
+    initilization();
+    // getInitLocation();
     return Scaffold(
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: initPosition,
-        myLocationEnabled: true,
-        compassEnabled: true,
-        markers: Set.of((marker != null) ? [marker] : []),
-        circles: Set.of((circle != null) ? [circle] : []),
-        onMapCreated: (GoogleMapController controller) {
-          _controller = controller;
-        },
+      body: SlidingUpPanel(
+        panel: Container(
+            color: Colors.grey[300],
+            // child: Text("Hey"),
+            child: Table(
+              children: _buildRow(),
+            )),
+        body: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: widget.initPosition,
+          myLocationEnabled: true,
+          compassEnabled: true,
+          markers: Set.of((marker != null) ? [marker] : []),
+          circles: Set.of((circle != null) ? [circle] : []),
+          onMapCreated: (GoogleMapController controller) {
+            _controller = controller;
+          },
+        ),
       ),
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.location_searching),
-          onPressed: () {
-            getLocation();
-          }),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
+      // floatingActionButton: FloatingActionButton(
+      //     child: Icon(Icons.location_searching),
+      //     onPressed: () {
+      //       getLocation();
+      //     }),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

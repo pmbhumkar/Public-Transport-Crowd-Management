@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maptrack/pages/bus_track.dart';
+import 'package:maptrack/pages/location_loader.dart';
+import 'package:maptrack/services/database.dart';
 
 class BusTimeList extends StatefulWidget {
   static final backColor = Colors.grey[800];
@@ -13,9 +15,11 @@ class BusTimeList extends StatefulWidget {
 class _BusTimeListState extends State<BusTimeList> {
   String deptValue = "Depart Now";
   // String dest = BusTimeList.destination;
-  List<Map<String, String>> busList = [];
+  List busList = [];
+  List busIDs = [];
   final source = TextEditingController(text: "");
   final destController = TextEditingController(text: "");
+  DatabaseService d = DatabaseService();
 
   void initDestination() {
     setState(() {
@@ -24,24 +28,35 @@ class _BusTimeListState extends State<BusTimeList> {
   }
 
   Future buildList() async {
+    Map tempData = {};
     setState(() {
       widget.destination = destController.text;
-      if (destController.text != "") {
-        busList = [
-          {"number": "123", "duration": "19 min", "busStop": "Aundh Bus Stop"},
-          {"number": "101", "duration": "15 min", "busStop": "Medipoint"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-          {"number": "218", "duration": "27 min", "busStop": "Parihar Chowk"},
-        ];
-      } else {
-        busList = [];
-      }
+      busIDs = [];
+      busList = [];
     });
+
+    if (destController.text != "") {
+      List routeIds = await d.getBusRoutesByDestination(destController.text);
+      print(routeIds);
+
+      routeIds.forEach((routeId) async {
+        tempData = await d.getBusInfoFromRoutes(routeId);
+        setState(() {
+          tempData.keys.forEach((busId) {
+            if (busId != "") {
+              // Check the bus schedule before adding to the list
+              busList.add(tempData[busId]);
+              busIDs.add(busId);
+            }
+          });
+          // print(tempData);
+        });
+      });
+    } else {
+      setState(() {
+        busList = [];
+      });
+    }
   }
 
   @override
@@ -168,24 +183,23 @@ class _BusTimeListState extends State<BusTimeList> {
             child: ListTile(
               leading: Icon(Icons.directions_bus),
               title: Text(
-                busList[i]["number"],
+                // busList[i]["number"],
+                busList[i]["Number"].toString(),
                 style: TextStyle(fontSize: 20),
               ),
-              subtitle: Text(busList[i]["busStop"] + ' / ' + busList[i]["duration"]),
-              trailing:  Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget> [
-                  Text('Avail - 20'),
-                  Text('Psgr - 35')
-                ]
-              ),
+              subtitle: Text(destController.text),
+              trailing: Text(
+                  busList[i]["TotalSeats"] - busList[i]["PassengerCount"] != 0
+                      ? "Seats Avail - " +
+                          (busList[i]["TotalSeats"] -
+                                  busList[i]["PassengerCount"])
+                              .toString()
+                      : "Bus Full"),
               onTap: () {
                 // Navigator.pushNamed(context, '/busTrack');
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        BusTrack(),
-                  ));
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => LocationLoader(busId: busIDs[i]),
+                ));
               },
             ),
           );
