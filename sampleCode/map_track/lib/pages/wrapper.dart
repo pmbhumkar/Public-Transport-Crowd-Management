@@ -9,13 +9,14 @@ import 'package:maptrack/pages/manager.dart';
 import 'package:maptrack/pages/no_role.dart';
 import 'package:maptrack/pages/sanitization_form.dart';
 import 'package:maptrack/pages/search_landing.dart';
+import 'package:maptrack/pages/temp.dart';
 import 'package:maptrack/pages/vehicle_manage.dart';
 import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // final user = Provider.of<User>(context);
+    final user = Provider.of<User>(context);
     
     // if (user != null) {
     //   print('Here');
@@ -37,6 +38,8 @@ class Wrapper extends StatelessWidget {
     //   return NoRole();
     // }
     return BusTimeList(destination: "PMC");
-    // return LocationLoader();
+    // return TempTimer();
+    // return VehicleManage();
+    // return SearchLanding();
   }
 }

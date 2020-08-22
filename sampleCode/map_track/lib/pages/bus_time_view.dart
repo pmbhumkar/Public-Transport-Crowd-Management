@@ -20,6 +20,9 @@ class _BusTimeListState extends State<BusTimeList> {
   final source = TextEditingController(text: "");
   final destController = TextEditingController(text: "");
   DatabaseService d = DatabaseService();
+  Map<String, dynamic> busDataToPass = {};
+
+
 
   void initDestination() {
     setState(() {
@@ -64,7 +67,7 @@ class _BusTimeListState extends State<BusTimeList> {
     initDestination();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Routes"),
+        title: Text("Rotues"),
         backgroundColor: BusTimeList.backColor,
         elevation: 0.0,
         bottom: PreferredSize(
@@ -184,7 +187,7 @@ class _BusTimeListState extends State<BusTimeList> {
               leading: Icon(Icons.directions_bus),
               title: Text(
                 // busList[i]["number"],
-                busList[i]["Number"].toString(),
+                busList[i]["BusRoute"],
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: Text(destController.text),
@@ -200,6 +203,7 @@ class _BusTimeListState extends State<BusTimeList> {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => LocationLoader(busId: busIDs[i]),
                 ));
+                // getBusData(busIDs[i]);
               },
             ),
           );

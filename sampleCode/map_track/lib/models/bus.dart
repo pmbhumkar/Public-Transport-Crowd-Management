@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Bus {
-  final int number;
+  final String number;
   final String busRoute;
   final Timestamp lastSanitized;
   final int totalSeats;

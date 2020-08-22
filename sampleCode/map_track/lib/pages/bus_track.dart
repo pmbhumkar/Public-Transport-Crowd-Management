@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -5,11 +6,14 @@ import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maptrack/services/database.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:intl/intl.dart';
 
 class BusTrack extends StatefulWidget {
+  Map busData = {};
   String busId = "";
   CameraPosition initPosition;
-  BusTrack({Key key, @required this.busId, this.initPosition}) : super(key: key);
+  BusTrack({Key key, @required this.busData, this.busId, this.initPosition})
+      : super(key: key);
 
   @override
   _BusTrackState createState() => _BusTrackState();
@@ -54,8 +58,23 @@ class _BusTrackState extends State<BusTrack> {
   Marker marker;
   Circle circle;
   int counter = 0;
-  static String busID = "";
-  Map<String, String> statusMap = {
+  // static DateTime ts = new DataTime.now()
+  String busID = "";
+  static Timestamp ts = Timestamp.now();
+  static var date;
+  static var dateString;
+  Timer _timer;
+  bool once = true;
+  var ds = DatabaseService();
+  static Map currentBusData = {
+    "BusRoute": "111",
+    "Number": "MH-No number",
+    "PassengerCount": 0,
+    "TotalSeats": 50,
+    "LastSanitized": ts
+  };
+
+  Map temp = {
     "Time to arrive at {BusStopName}": "19 min",
     "Bus Number": "7537",
     "Available Seats": "13",
@@ -63,16 +82,41 @@ class _BusTrackState extends State<BusTrack> {
     "Driver health status": "Healthy",
     "Bus sanitization status": "Last sanitized on 25th July",
     "Last update": "2 sec ago",
-    "BusId": busID,
+  };
+  Map<String, String> statusMap = {
+    "Route number": currentBusData["BusRoute"],
+    "Bus Number": currentBusData["Number"],
+    "Available seats":
+        (currentBusData["TotalSeats"] - currentBusData["PassengerCount"])
+            .toString(),
+    "Stanitization status": dateString.toString(),
+    "Bus Operator health": "Healthy"
   };
 
   void initilization() {
     setState(() {
+      currentBusData = widget.busData;
+      date = DateTime.fromMicrosecondsSinceEpoch(
+          currentBusData["LastSanitized"].microsecondsSinceEpoch);
+      dateString = DateFormat().add_yMMMMd().format(date);
       busID = widget.busId;
+      // print("------------------------------------");
+      // print(currentBusData.keys);
     });
+    if (once) {
+      // startTimer();
+      once = false;
+    }
   }
 
-  
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 10), (timer) {
+      if(busID != "") {
+        // print("fetching data from : " + busID);
+        ds.getBusGeo(busID);
+      }
+    });
+  }
   // CameraPosition initPosition = CameraPosition(
   //   target: LatLng(18.5204, 73.8567),
   //   zoom: 15,
@@ -127,8 +171,9 @@ class _BusTrackState extends State<BusTrack> {
     //       {'latitude': sample["lat"], 'longitude': sample["lng"]});
 
     // }
-    var d = DatabaseService();
-    d.updateData(location);
+    print("Getting data");
+    
+    ds.updateData(location, busID);
     updateMarkerAndCircle(location, imageData);
   }
 
@@ -157,8 +202,8 @@ class _BusTrackState extends State<BusTrack> {
             child: Text(key),
           ),
           Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Text(":  " + statusMap[key])),
+              padding: EdgeInsets.only(top: 10),
+              child: Text(":  " + statusMap[key])),
         ],
       ));
     }

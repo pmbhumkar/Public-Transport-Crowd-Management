@@ -91,6 +91,7 @@ class _TotalBusListState extends State<TotalBusList> {
     "U8d5rYOKb4FykiggayNh"
   ];
 
+  
   var routes = [
     {
       "Name": "Kothrud-PMC",
@@ -151,7 +152,7 @@ class _TotalBusListState extends State<TotalBusList> {
       var busInfo = {
         "BusRoute": element["Name"],
         "LastSanitized": ts,
-        "Number": random.nextInt(999) + 2,
+        "Number": random.nextInt(997) + 2,
         "TotalSeats": 50,
         "PassengerCount": random.nextInt(40) + 5,
         "LiveCount": rlist,
@@ -169,7 +170,8 @@ class _TotalBusListState extends State<TotalBusList> {
 
   void addAllRoutes() {
     routes.forEach((element) {
-      d.addBusRoute(element["Name"], element);
+      var routeId = random.nextInt(997) + 2;
+      d.addBusRoute(routeId.toString(), element);
     });
   }
 
@@ -227,10 +229,12 @@ class _TotalBusListState extends State<TotalBusList> {
         itemBuilder: (BuildContext context, int i) {
           return Card(
             child: ListTile(
-              title: Text("${busList[i].number}"),
-              subtitle: Text(busList[i].busRoute),
+              title: Text(busList[i].busRoute),
+              subtitle: Text(busList[i].number),
               onTap: () {
+                // addAllRoutes();
                 setState(() {
+                  // addAllRoutes();
                   // getBusRoutes();
                   // getBusLists();
                   // listRoutes();

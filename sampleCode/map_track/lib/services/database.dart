@@ -7,7 +7,7 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference busCollection =
-      Firestore.instance.collection("BusLocation");
+      Firestore.instance.collection("BusGeo");
   final CollectionReference userCollection =
       Firestore.instance.collection("Users");
   static final CollectionReference busInfo =
@@ -21,10 +21,16 @@ class DatabaseService {
   static final CollectionReference busSchedule =
       Firestore.instance.collection("ScheduledRides");
 
-  Future updateData(LocationData newLocation) async {
-    return await busCollection.document().setData({
+  Future updateData(LocationData newLocation, busId) async {
+    return await busCollection.document(busId).setData({
       "latlng": new GeoPoint(newLocation.latitude, newLocation.longitude),
+      "accuracy": newLocation.accuracy,
+      "heading": newLocation.heading
     });
+  }
+
+  Future<Map> getBusGeo(busId) async {
+    return await busCollection.document(busId).get().then((value) => value.data);
   }
 
   Future addBusStop(docName) async {
@@ -109,6 +115,14 @@ class DatabaseService {
     // busData["busIDs"] = busIDs;
     return busData;
 
+  }
+
+  Future<Map> getBusInfoFromId(busId) async {
+    Map busData = {};
+    await busInfo.document(busId).get().then((value) {
+      busData = value.data;
+    });
+    return busData;
   }
 
   Future<String> getUserRole() async {
