@@ -12,34 +12,53 @@ import 'package:maptrack/pages/search_landing.dart';
 import 'package:maptrack/pages/temp.dart';
 import 'package:maptrack/pages/vehicle_manage.dart';
 import 'package:provider/provider.dart';
+import 'package:maptrack/services/database.dart';
 
-class Wrapper extends StatelessWidget {
+class Wrapper extends StatefulWidget {
+  @override
+  _WrapperState createState() => _WrapperState();
+}
+
+class _WrapperState extends State<Wrapper> {
+  DatabaseService d = DatabaseService();
+  String userRole = "";
+  bool roleCheck = true;
+
+  void getUserRole(userID) async {
+    String role = await d.getUserRole(userID);
+    setState(() {
+      userRole = role;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    
-    // if (user != null) {
-    //   print('Here');
-    //   print(user.role);
-    // } else {
-    //   print("No user");
-    // }
-    //     // return either the Home or Authenticate widget
-    // if (user == null){
-    //   return SearchLanding();
-    // } else if (user.role == 'driver') {
-    //   // print("-----------------------------------");
-    //   print(user.role);
-    //   // print("-----------------------------------");
-    //   return Driver();
-    // } else if (user.role == 'manager') {
-    //   return ManagerPage();
-    // } else {
-    //   return NoRole();
-    // }
-    return BusTimeList(destination: "PMC");
-    // return TempTimer();
-    // return VehicleManage();
+    if (user != null) {
+      if (roleCheck) {
+        getUserRole(user.uid);
+        print(userRole);
+        setState(() {
+          roleCheck = false;
+        });
+      }
+    }
+
+    if (user == null) {
+      setState(() {
+        roleCheck = true;
+      });
+      return LoginPage();
+    } else {
+      if (userRole == "manager") {
+        return ManagerPage();
+      } else if (userRole == "driver") {
+        return Driver(userID: user.uid);
+      }
+      return LoginPage();
+    }
+
+    // return LoginPage();
     // return SearchLanding();
   }
 }

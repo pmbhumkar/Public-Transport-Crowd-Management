@@ -14,10 +14,10 @@ class AuthService {
     if (user != null) {
       print(user);
       ds = DatabaseService(uid: user.uid);
-      _getUserRole();
+      // _getUserRole();
       // userRole = ds.getUserRole();
       // print(userRole);
-      return User(uid: user.uid, role: 'manager');
+      return User(uid: user.uid);
       // return User(uid: user.uid, role: userRole);
     }
     return null;
@@ -25,14 +25,17 @@ class AuthService {
     // return user != null ? User(uid: user.uid, role: 'driver') : null;
   }
 
-  void _getUserRole() async {
-    this.userRole = await ds.getUserRole();
-    print(ds.uid);
+  // void _getUserRole() async {
 
-    print(userRole);
-    print("-----------------------------------");
+  //   String a = await ds.getUserRole();
 
-  }
+
+  //   print(ds.uid);
+
+  //   // print(userRole);
+  //   // print("-----------------------------------");
+
+  // }
 
   // auth change user stream
   Stream<User> get user {

@@ -125,10 +125,10 @@ class DatabaseService {
     return busData;
   }
 
-  Future<String> getUserRole() async {
+  Future<String> getUserRole(userID) async {
     // print(uid);
     return await userCollection
-        .document(uid)
+        .document(userID)
         .get()
         .then((value) => value['role']);
   }
