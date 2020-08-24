@@ -47,7 +47,7 @@ class ConductorDeviceTrackingState extends State<ConductorDeviceTracking> {
   Set<Polyline> _polylines = Set<Polyline>();
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints;
-  String googleAPIKey = 'AIzaSyAnnBzNgoL_xOZ9yUfHE7oCOwuqNMcTdGE';
+  String googleAPIKey = '<API_KEY>';
   PolylineResult result;
   DatabaseService d = DatabaseService();
   bool once = false;
