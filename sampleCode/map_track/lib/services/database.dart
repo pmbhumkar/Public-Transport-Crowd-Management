@@ -30,13 +30,27 @@ class DatabaseService {
   }
 
   Future<Map> getBusGeo(busId) async {
-    return await busCollection.document(busId).get().then((value) => value.data);
+    return await busCollection
+        .document(busId)
+        .get()
+        .then((value) => value.data);
   }
 
   Future addBusStop(docName) async {
     return await busStop
         .document(docName)
         .setData({"latlng": new GeoPoint(18.564233, 73.776813), "skip": false});
+  }
+
+  Future<Map> getBusStopByName(busStopName) async {
+    return await busStop
+        .document(busStopName)
+        .get()
+        .then((value) => value.data);
+  }
+
+  updateBusStopHotspot(busStopName, status) async {
+    await busStop.document(busStopName).updateData({"skip": status});
   }
 
   Future addBusRoute(docName, data) async {
@@ -46,6 +60,23 @@ class DatabaseService {
       "Source": data["Source"],
       "Destination": data["Destination"]
     });
+  }
+
+  Future getBusRoute(routeID) async {
+    return await busRoute.document(routeID).get().then((value) => value.data);
+  }
+
+  Future getCurrentScheduledRides(busID) async {
+    var bsc = await busSchedule
+        .where("BusId", isEqualTo: busID)
+        .where("RideStarted", isEqualTo: true)
+        .getDocuments();
+    var scheduleInfo = bsc.documents;
+    List scheduleData = [];
+    scheduleInfo.forEach((element) {
+      scheduleData.add(element.data);
+    });
+    return scheduleData;
   }
 
   Future<void> listBusRoutes() async {
@@ -78,6 +109,27 @@ class DatabaseService {
     });
   }
 
+  Future<Map> getBusOperatorByName(name) async {
+    Map operatorData = {};
+    var snapshot =
+        await busOperator.where("Name", isEqualTo: name).getDocuments();
+    var documents = snapshot.documents;
+    documents.forEach((element) {
+      operatorData[element.documentID] = element.data;
+    });
+    return operatorData;
+  }
+
+  updateBusOperatorHealth(userID, healthStatus) async {
+    await busOperator
+        .document(userID)
+        .updateData({"HealthStatus": healthStatus});
+  }
+
+  updateBusSanitizationStatus(busID, status) async {
+    await busInfo.document(busID).updateData({"LastSanitized": status});
+  }
+
   Future addSchedule(data) async {
     return await busSchedule.document().setData({
       "OperatorId": data["OperatorId"],
@@ -88,7 +140,9 @@ class DatabaseService {
   }
 
   Future getBusRoutesByDestination(destination) async {
-    var bsd = await busRoute.where("Destination", isEqualTo: destination).getDocuments();
+    var bsd = await busRoute
+        .where("Destination", isEqualTo: destination)
+        .getDocuments();
     var snap = bsd.documents;
     // print("Hey-------------------------");
     // print(snap);
@@ -100,7 +154,8 @@ class DatabaseService {
   }
 
   Future<Map> getBusInfoFromRoutes(routeId) async {
-    var binfo = await busInfo.where("BusRoute", isEqualTo: routeId).getDocuments();
+    var binfo =
+        await busInfo.where("BusRoute", isEqualTo: routeId).getDocuments();
     var snap = binfo.documents;
     // var busList = [];
     // List busIDs = [];
@@ -114,7 +169,6 @@ class DatabaseService {
     // busData["busList"] = busList;
     // busData["busIDs"] = busIDs;
     return busData;
-
   }
 
   Future<Map> getBusInfoFromId(busId) async {

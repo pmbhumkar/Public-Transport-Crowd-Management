@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maptrack/pages/bus_time_view.dart';
 import 'package:maptrack/pages/login.dart';
+import 'package:maptrack/pages/operator_health.dart';
 
 class SearchLanding extends StatelessWidget {
   Map<String, IconData> favourites = {
@@ -179,8 +180,7 @@ class SearchLanding extends StatelessWidget {
                   Navigator.pop(context);
                   // Navigator.pushNamed(context, '/login');
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        LoginPage(),
+                    builder: (context) => LoginPage(),
                   ));
                 },
                 child: Text(
@@ -208,10 +208,19 @@ class SearchLanding extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text(
-                'Feedback',
-                style: TextStyle(
-                  color: Colors.white,
+              title: InkWell(
+                onTap: () {
+                  Navigator.pop(context);
+                  // Navigator.pushNamed(context, '/login');
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => OperatorHealth(),
+                  ));
+                },
+                child: Text(
+                  'Feedback',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

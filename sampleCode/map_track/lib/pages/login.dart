@@ -163,6 +163,8 @@ class _LoginPageState extends State<LoginPage> {
                                       'Invalid Username or Password';  
                                   });
                                   
+                                } else {
+                                  Navigator.pop(context);
                                 }
                               } catch (e) {
                                 print(e);

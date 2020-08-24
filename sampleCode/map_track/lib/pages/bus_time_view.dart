@@ -22,7 +22,10 @@ class _BusTimeListState extends State<BusTimeList> {
   DatabaseService d = DatabaseService();
   Map<String, dynamic> busDataToPass = {};
 
-
+  void getBusRoute(busIdForRoute) async {
+    Map routeData = await d.getBusRoute(busIdForRoute);
+    print(routeData);
+  }
 
   void initDestination() {
     setState(() {
@@ -44,14 +47,21 @@ class _BusTimeListState extends State<BusTimeList> {
 
       routeIds.forEach((routeId) async {
         tempData = await d.getBusInfoFromRoutes(routeId);
-        setState(() {
-          tempData.keys.forEach((busId) {
-            if (busId != "") {
-              // Check the bus schedule before adding to the list
+        List scheduleRides = [];
+        tempData.keys.forEach((busId) async {
+          if (busId != "") {
+            setState(() {
               busList.add(tempData[busId]);
               busIDs.add(busId);
+            });
+            // Check the bus schedule before adding to the list
+            scheduleRides = await d.getCurrentScheduledRides(busId);
+            // print(scheduleRides);
+            if (scheduleRides.isNotEmpty) {
+              print(scheduleRides[0]["BusId"]);
             }
-          });
+          }
+
           // print(tempData);
         });
       });
@@ -187,7 +197,7 @@ class _BusTimeListState extends State<BusTimeList> {
               leading: Icon(Icons.directions_bus),
               title: Text(
                 // busList[i]["number"],
-                busList[i]["BusRoute"],
+                busList[i] != null ? busList[i]["BusRoute"] : "",
                 style: TextStyle(fontSize: 20),
               ),
               subtitle: Text(destController.text),
@@ -199,6 +209,7 @@ class _BusTimeListState extends State<BusTimeList> {
                               .toString()
                       : "Bus Full"),
               onTap: () {
+                // getBusRoute(busList[i]["BusRoute"]);
                 // Navigator.pushNamed(context, '/busTrack');
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => LocationLoader(busId: busIDs[i]),
