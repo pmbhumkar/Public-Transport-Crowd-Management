@@ -36,6 +36,10 @@ class DatabaseService {
         .then((value) => value.data);
   }
 
+  Future<String> getUserName(userID) async {
+    return await userCollection.document(userID).get().then((value) => value["name"]);
+  }
+
   Future addBusStop(docName) async {
     return await busStop
         .document(docName)

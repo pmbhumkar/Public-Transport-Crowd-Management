@@ -63,3 +63,16 @@ Depot Manager:
 Dates, Bus, Time, BusStop,
 
 Hotspot = ["BusStopName", "..."]
+
+Alerts:
+{
+    "AlertID": {
+        "RouteID": "",
+        "Driver": "<bool>",
+        "CoPassenger": "<bool>",
+        "BusSanitization": "<bool>",
+        "Mask": "<bool>",
+        "SocialDistancing": "<bool>",
+        "Date": "<datetime>",
+    }
+}
