@@ -38,6 +38,14 @@ dependencies:
   intl: ^0.16.1
   charts_flutter: ^0.9.0
   pie_chart: ^3.1.1
+  google_map_polyline: 
+  line_awesome_flutter: ^1.0.1
+  flutter_screenutil: ^1.0.2
+  animated_theme_switcher: ^1.0.5
+  permission: ^0.1.7
+  flutter_form_builder: 3.12.0
+  
+
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +74,7 @@ flutter:
   - assets/bus_wallpaper.jpg
   - assets/bus_inside.jpg
   - assets/londonbus.jpg
+  - assets/bus_driver2.png
   
 
   # An image asset can refer to one or more resolution-specific "variants", see

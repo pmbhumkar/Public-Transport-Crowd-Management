@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:typed_data';
@@ -6,20 +5,12 @@ import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maptrack/services/database.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:intl/intl.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:maptrack/pages/passenger_alarm.dart';
 
 class BusTrack extends StatefulWidget {
-  Map busData = {};
   String busId = "";
-  Uint8List busImage;
   CameraPosition initPosition;
-  BusTrack(
-      {Key key,
-      @required this.busData,
-      this.busId,
-      this.initPosition,
-      this.busImage})
+  BusTrack({Key key, @required this.busId, this.initPosition})
       : super(key: key);
 
   @override
@@ -65,39 +56,8 @@ class _BusTrackState extends State<BusTrack> {
   Marker marker;
   Circle circle;
   int counter = 0;
-  // static DateTime ts = new DataTime.now()
-  String busID = "";
-  static Timestamp ts = Timestamp.now();
-  static var date;
-  static var dateString;
-  Timer _timer;
-  bool once = true;
-  var ds = DatabaseService();
-  Uint8List imageData;
-  CameraPosition newPos;
-
-  // this will hold the generated polylines
-  LatLng source_place = LatLng(18.57098, 73.77297);
-  Set<Polyline> _polylines =
-      {}; // this will hold each polyline coordinate as Lat and Lng pairs
-  List<LatLng> polylineCoordinates =
-      []; // this is the key object - the PolylinePoints
-// which generates every polyline between start and finish
-  PolylinePoints polylinePoints = PolylinePoints();
-  String googleAPIKey = "AIzaSyAnnBzNgoL_xOZ9yUfHE7oCOwuqNMcTdGE";
-  PolylineResult result;
-  Map busLocation = {};
-  GeoPoint busGeoPoint;
-
-  static Map currentBusData = {
-    "BusRoute": "121",
-    "Number": "MH-No number",
-    "PassengerCount": 0,
-    "TotalSeats": 50,
-    "LastSanitized": ts
-  };
-
-  Map temp = {
+  static String busID = "";
+  Map<String, String> statusMap = {
     "Time to arrive at {BusStopName}": "19 min",
     "Bus Number": "7537",
     "Available Seats": "13",
@@ -105,111 +65,23 @@ class _BusTrackState extends State<BusTrack> {
     "Driver health status": "Healthy",
     "Bus sanitization status": "Last sanitized on 25th July",
     "Last update": "2 sec ago",
+    "BusId": busID,
   };
-  Map statusMap = {};
 
   void initilization() {
-    // print("init");
     setState(() {
-      currentBusData = widget.busData;
-      date = DateTime.fromMicrosecondsSinceEpoch(
-          currentBusData["LastSanitized"].microsecondsSinceEpoch);
-      dateString = DateFormat().add_yMMMMd().format(date);
       busID = widget.busId;
-      imageData = widget.busImage;
-      // newPos = widget.initPosition;
-      // print("------------------------------------");
-      // print(currentBusData.keys);
-      statusMap = {
-        "Route number": currentBusData["BusRoute"],
-        "Bus Number": currentBusData["Number"],
-        "Available seats":
-            (currentBusData["TotalSeats"] - currentBusData["PassengerCount"])
-                .toString(),
-        "Stanitization status": dateString.toString(),
-        "Bus Operator health": "Healthy"
-      };
-    });
-    if (once) {
-      setState(() {
-        newPos = widget.initPosition;
-      });
-      startTimer();
-      once = false;
-    }
-  }
-
-  void getBusLocation() async {}
-
-  void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 10), (timer) async {
-      if (busID != "") {
-        print("fetching data from : " + busID);
-        // ds.getBusGeo(busID);
-        Map locdata = await ds.getBusGeo(busID);
-        if (this.mounted) {
-          setState(() {
-            busGeoPoint = locdata["latlng"];
-            busLocation["latitude"] = busGeoPoint.latitude;
-            busLocation["longitude"] = busGeoPoint.longitude;
-            busLocation["accuracy"] = locdata["accuracy"];
-            busLocation["heading"] = locdata["heading"];
-            newPos = new CameraPosition(
-              target: LatLng(busLocation["latitude"], busLocation["longitude"]),
-              zoom: 15,
-            );
-            // busLocation = LocationData(dataLoc);
-          });
-          updateMarkerAndCircle(busLocation, imageData);
-        }
-
-        
-      }
-
-      // setState(() {
-      //   currentBusData = widget.busData;
-      //   date = DateTime.fromMicrosecondsSinceEpoch(
-      //       currentBusData["LastSanitized"].microsecondsSinceEpoch);
-      //   dateString = DateFormat().add_yMMMMd().format(date);
-      //   busID = widget.busId;
-      //   // print("------------------------------------");
-      //   // print(currentBusData.keys);
-      // });
-      // if (result != null) {
-      //   print(result.points);
-      // }
-      // print(currentBusData);
     });
   }
 
-  setPolylines(destination) async {
-    result = await polylinePoints.getRouteBetweenCoordinates(
-        googleAPIKey,
-        PointLatLng(source_place.latitude, source_place.longitude),
-        PointLatLng(destination.latitude, destination.longitude),
-        travelMode: TravelMode.driving);
-    print("After calling---------------------------------------");
-    if (result.points.isNotEmpty) {
-      // loop through all PointLatLng points and convert them
-      // to a list of LatLng, required by the Polyline
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-    setState(() {
-      // create a Polyline instance
-      // with an id, an RGB color and the list of LatLng pairs
-      Polyline polyline = Polyline(
-          polylineId: PolylineId("poly"),
-          color: Color.fromARGB(255, 40, 122, 198),
-          points: polylineCoordinates);
+  // CameraPosition initPosition = CameraPosition(
+  //   target: LatLng(18.5204, 73.8567),
+  //   zoom: 15,
+  // );
 
-      // add the constructed polyline as a set of points
-      // to the polyline set, which will eventually
-      // end up showing up on the map
-      _polylines.add(polyline);
-    });
-  }
+  // _BusTrackState() {
+  //   getInitLocation();
+  // }
 
   Future<Uint8List> getMarker() async {
     ByteData byteData =
@@ -217,15 +89,13 @@ class _BusTrackState extends State<BusTrack> {
     return byteData.buffer.asUint8List();
   }
 
-  void updateMarkerAndCircle(Map newLocalData, Uint8List currentBusImage) {
-    print("--------------------");
-    print(imageData);
-    LatLng latlng = LatLng(newLocalData["latitude"], newLocalData["longitude"]);
+  void updateMarkerAndCircle(LocationData newLocalData, Uint8List imageData) {
+    LatLng latlng = LatLng(newLocalData.latitude, newLocalData.longitude);
     this.setState(() {
       marker = Marker(
           markerId: MarkerId("bus"),
           position: latlng,
-          rotation: newLocalData["heading"],
+          rotation: newLocalData.heading,
           draggable: false,
           zIndex: 2,
           flat: true,
@@ -233,23 +103,49 @@ class _BusTrackState extends State<BusTrack> {
           icon: BitmapDescriptor.fromBytes(imageData));
       circle = Circle(
           circleId: CircleId("busloc"),
-          radius: newLocalData["accuracy"],
+          radius: newLocalData.accuracy,
           zIndex: 1,
           strokeColor: Colors.blue,
           center: latlng,
           fillColor: Colors.blue.withAlpha(70));
     });
-    // setPolylines(newLocalData);
   }
 
-  // void getLocation() async {
-  //   Uint8List imageData = await getMarker();
-  //   LocationData location = await _locationTracker.getLocation();
+  void getLocation() async {
+    Uint8List imageData = await getMarker();
+    LocationData location = await _locationTracker.getLocation();
+    // print(location.latitude);
+    // print(location.longitude);
+    // print(location.accuracy);
+    // print(location.altitude);
+    // print(location.heading);
+    // print(location.hashCode);
+    // print(location.speed);
+    // print(location.speedAccuracy);
+    // if (counter < testData.length) {
+    //   var sample = testData[counter];
+    //   LocationData newLoc = new LocationData.fromMap(
+    //       {'latitude': sample["lat"], 'longitude': sample["lng"]});
 
-  //   // print("Getting data");
+    // }
+    var d = DatabaseService();
+    d.updateData(location);
+    updateMarkerAndCircle(location, imageData);
+  }
 
-  //   // ds.updateData(location, busID);
-  //   updateMarkerAndCircle(location, imageData);
+  // bool initial = false;
+  // void getInitLocation() async {
+  //   if (!initial) {
+  //     LocationData location = await _locationTracker.getLocation();
+  //     this.setState(() {
+  //       initPosition = new CameraPosition(
+  //         target: LatLng(location.latitude, location.longitude),
+  //         zoom: 15,
+  //       );
+  //     });
+  //     print(initPosition);
+  //     initial = true;
+  //   }
   // }
 
   List<TableRow> _buildRow() {
@@ -273,7 +169,6 @@ class _BusTrackState extends State<BusTrack> {
   @override
   Widget build(BuildContext context) {
     initilization();
-    // print("me");
     // getInitLocation();
     return Scaffold(
       body: SlidingUpPanel(
@@ -283,18 +178,9 @@ class _BusTrackState extends State<BusTrack> {
             child: Table(
               children: _buildRow(),
             )),
-        // child: ListView.builder(
-        //   itemCount: currentBusData.keys.length,
-        //   itemBuilder: (context, i) {
-        //     return ListTile(
-        //       title: ,
-        //     );
-        //   },
-        // ),
-        // ),
         body: GoogleMap(
           mapType: MapType.normal,
-          initialCameraPosition: newPos,
+          initialCameraPosition: widget.initPosition,
           myLocationEnabled: true,
           compassEnabled: true,
           markers: Set.of((marker != null) ? [marker] : []),
@@ -304,12 +190,14 @@ class _BusTrackState extends State<BusTrack> {
           },
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //     child: Icon(Icons.location_searching),
-      //     onPressed: () {
-      //       getLocation();
-      //     }),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.grey[700],
+          child: Icon(Icons.add_alert, color: Colors.red),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SafetyViolationAlarm(),
+            ));
+          }),
     );
   }
 }

@@ -207,4 +207,98 @@ class DatabaseService {
   Stream<List<Bus>> get buses {
     return busInfo.snapshots().map(_busListFromSnapshot);
   }
+
+  Future<Map> getRidesByDateAndOperator(DateTime date, opId) async {
+    var binfo =
+        await busSchedule.where("OperatorId", isEqualTo: opId).getDocuments();
+    var snap = binfo.documents;
+    var busRides = await busInfo.getDocuments();
+    var busSnap = busRides.documents;
+
+    // var busList = [];
+    // List busIDs = [];
+    Map busData = {};
+    snap.forEach((element) {
+      String docDate =
+          DateFormat('yyyy-MM-dd').format(element.data["DateTime"].toDate());
+      String selectedDate = DateFormat('yyyy-MM-dd').format(date);
+
+      if (docDate == selectedDate) {
+        busData[element.documentID] = element.data;
+        print(docDate);
+        busSnap.forEach((elementinside) {
+          if (elementinside.documentID == element.data["BusId"]) {
+            print("enter");
+            busData[element.documentID]["Route"] =
+                elementinside.data["BusRoute"];
+            busData[element.documentID]["Vehicle number"] =
+                elementinside.data["Number"];
+          }
+        });
+        // busIDs.add(element.documentID);
+        // busList.add(element.data);
+      }
+    });
+    // busData["busList"] = busList;
+    // busData["busIDs"] = busIDs;
+    //print(busData);
+    return busData;
+  }
+
+  Future<Map> getBusInfo(String busId) async {
+    Map busData = {};
+    var binfo = await busInfo.document(busId).get();
+
+    // var busList = [];
+    // List busIDs = [];
+
+    busData = binfo.data;
+
+    return busData;
+  }
+
+  Future getRouteByBusId(String busId) async {
+    print("Enter get routes");
+    print(busId);
+    Map busData = {};
+    var binfo = await busRoute.document(busId).get();
+
+    // var busList = [];
+    // List busIDs = [];
+
+    busData = binfo.data;
+    print(busData);
+    return busData;
+  }
+
+  Future checkIfSkip(stop) async {
+    Map stopData = {};
+    var stopinfo = await busStop.document(stop).get();
+
+    stopData = stopinfo.data;
+    print(stopData);
+    return (stopData);
+  }
+
+  Future<Map> getDriverInfoById(driverId) async {
+    Map driverData = {};
+    var driverInfo = await busOperator.document(driverId).get();
+
+    driverData = driverInfo.data;
+    print(driverData);
+    return (driverData);
+  }
+
+  Future<List> getBusRoutes() async {
+    List<String> routeData = [];
+    var routeInfo = await busInfo.getDocuments();
+    var snap = routeInfo.documents;
+
+    snap.forEach((element) {
+      routeData.add(element.data["BusRoute"]);
+    });
+
+    routeData = routeData.toSet().toList();
+    return routeData;
+  }
 }

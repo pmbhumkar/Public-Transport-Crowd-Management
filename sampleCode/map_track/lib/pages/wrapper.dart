@@ -16,6 +16,7 @@ import 'package:maptrack/pages/temp.dart';
 import 'package:maptrack/pages/vehicle_manage.dart';
 import 'package:provider/provider.dart';
 import 'package:maptrack/services/database.dart';
+import 'package:maptrack/pages/conductor_schedule.dart';
 
 class Wrapper extends StatefulWidget {
   @override
@@ -56,7 +57,7 @@ class _WrapperState extends State<Wrapper> {
     //   if (userRole == "manager") {
     //     return ManagerPage();
     //   } else if (userRole == "driver") {
-    //     return Driver(userID: user.uid);
+    //     return Schedule(userID: user.uid);
     //   }
     //   return SearchLanding();
     // }
