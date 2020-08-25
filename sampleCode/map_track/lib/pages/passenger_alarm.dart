@@ -52,6 +52,7 @@ class _SafetyViolationAlarmState extends State<SafetyViolationAlarm> {
                 _buildRouteSelectionDropDown(),
                 _buildDefaulterCheckboxWidgets(),
                 _buildProtocolViolatedCheckboxWidgets(),
+                _buildSanitizationViolatedCheckboxWidgets(),
                 //_buildChipsWidgets(),
                 //_buildPickerWidgets(),
                 //_buildSliderWidgets(),

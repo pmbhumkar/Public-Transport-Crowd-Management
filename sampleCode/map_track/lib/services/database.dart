@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:location/location.dart';
 import 'package:maptrack/models/bus.dart';
+import 'package:intl/intl.dart';
 
 class DatabaseService {
   final String uid;
@@ -37,7 +38,10 @@ class DatabaseService {
   }
 
   Future<String> getUserName(userID) async {
-    return await userCollection.document(userID).get().then((value) => value["name"]);
+    return await userCollection
+        .document(userID)
+        .get()
+        .then((value) => value["name"]);
   }
 
   Future addBusStop(docName) async {
@@ -63,6 +67,16 @@ class DatabaseService {
       "Route": data["Route"],
       "Source": data["Source"],
       "Destination": data["Destination"]
+    });
+  }
+
+  void updateCountAtDest(busId, dest) async {
+    var ref = busInfo.document(busId);
+    ref.get().then((snapshot) {
+      Map liveCount = Map.from(snapshot.data['LiveCount']);
+      liveCount[dest] = liveCount[dest] + 1;
+
+      ref.updateData({"LiveCount": liveCount});
     });
   }
 

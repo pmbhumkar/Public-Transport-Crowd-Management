@@ -22,10 +22,14 @@ class ConductorDeviceTracking extends StatefulWidget {
 
   final String busId;
   @override
-  State<StatefulWidget> createState() => ConductorDeviceTrackingState();
+  State<StatefulWidget> createState() => ConductorDeviceTrackingState(busId);
 }
 
 class ConductorDeviceTrackingState extends State<ConductorDeviceTracking> {
+  String busId;
+  ConductorDeviceTrackingState(this.busId);
+  PinInformation sourcePinInfo;
+  PinInformation destinationPinInfo;
   List busInfo = [];
   List textPlaceholder = [
     "Route",
@@ -53,12 +57,80 @@ class ConductorDeviceTrackingState extends State<ConductorDeviceTracking> {
   bool once = false;
   String dropdownValue = 'One';
   List<String> destList = [];
+  BitmapDescriptor sourceIcon;
+  BitmapDescriptor destinationIcon;
+  Location location;
+  PinInformation currentlySelectedPin = PinInformation(
+      pinPath: '',
+      location: LatLng(0, 0),
+      locationName: '',
+      labelColor: Colors.grey);
+  Set<Marker> _markers = Set<Marker>();
+  double pinPillPosition = -100;
 
   void initList() {
+    location = new Location();
     setState(() {
       once = true;
     });
     buildList();
+    // set custom marker pins
+    setSourceAndDestinationIcons();
+    // set the initial location
+  }
+
+  void setSourceAndDestinationIcons() async {
+    sourceIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/stop.png');
+
+    destinationIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/destination_map_marker.png');
+
+    showPinsOnMap();
+  }
+
+  void showPinsOnMap() {
+    print("Entered show pins on map");
+    var sourcePosition =
+        LatLng(SOURCE_LOCATION.latitude, SOURCE_LOCATION.longitude);
+    // get a LatLng out of the LocationData object
+    var destPosition = LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
+
+    sourcePinInfo = PinInformation(
+        locationName: "Start Location",
+        location: SOURCE_LOCATION,
+        pinPath: "assets/driving_pin.png",
+        labelColor: Colors.blueAccent);
+
+    destinationPinInfo = PinInformation(
+        locationName: "End Location",
+        location: DEST_LOCATION,
+        pinPath: "assets/destination_map_marker.png",
+        labelColor: Colors.purple);
+
+    // add the initial source location pin
+    _markers.add(Marker(
+        markerId: MarkerId('sourcePin'),
+        position: sourcePosition,
+        onTap: () {
+          setState(() {
+            currentlySelectedPin = sourcePinInfo;
+            pinPillPosition = 0;
+          });
+        },
+        icon: sourceIcon));
+    // destination pin
+    _markers.add(Marker(
+        markerId: MarkerId('destPin'),
+        position: destPosition,
+        onTap: () {
+          setState(() {
+            currentlySelectedPin = destinationPinInfo;
+            pinPillPosition = 0;
+          });
+        },
+        icon: destinationIcon));
   }
 
   static final CameraPosition initialLocation = CameraPosition(
@@ -70,6 +142,10 @@ class ConductorDeviceTrackingState extends State<ConductorDeviceTracking> {
     ByteData byteData =
         await DefaultAssetBundle.of(context).load("assets/bus_icon.jpg");
     return byteData.buffer.asUint8List();
+  }
+
+  void updateGeoLocationOfVehicle(LocationData newLocalData, busId) async {
+    await d.updateData(newLocalData, widget.busId);
   }
 
   void updateMarkerAndCircle(LocationData newLocalData, Uint8List imageData) {
@@ -116,6 +192,7 @@ class ConductorDeviceTrackingState extends State<ConductorDeviceTracking> {
                   tilt: 0,
                   zoom: 18.00)));
           updateMarkerAndCircle(newLocalData, imageData);
+          updateGeoLocationOfVehicle(newLocalData, widget.busId);
         }
       });
     } on PlatformException catch (e) {

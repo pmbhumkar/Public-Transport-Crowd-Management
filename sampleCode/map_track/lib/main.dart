@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:maptrack/models/user.dart';
 import 'package:maptrack/pages/wrapper.dart';
-import 'package:maptrack/pages/wrap2.dart';
+// import 'package:maptrack/pages/wrap2.dart';
 import 'package:maptrack/services/auth.dart';
 import 'package:provider/provider.dart';
 // import 'package:maptrack/pages/bus_track.dart';
@@ -10,8 +10,6 @@ import 'package:provider/provider.dart';
 // import 'package:maptrack/pages/login.dart';
 // import 'package:maptrack/pages/search_landing.dart';
 // import 'package:maptrack/pages/bus_time_view.dart';
-
-
 
 // void main() {
 //   runApp(MaterialApp(
@@ -31,8 +29,8 @@ import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
-  }
-  
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,4 +43,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
